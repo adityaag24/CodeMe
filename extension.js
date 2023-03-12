@@ -2,44 +2,11 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const http = require('http');
+const { spawn } = require('child_process');
 
-// create a function to send data to Python using http
-function sendDataToPython(text) {
-  // define the data to send as a JSON string
-  const data = JSON.stringify({ text });
 
-  // set up the options for the http request
-  const options = {
-    hostname: 'localhost', // replace with your server hostname
-    port: 5000, // replace with your server port
-    path: './runModel.py',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': data.length
-    }
-  };
 
-  // create the http request
-  const req = http.request(options, (res) => {
-    let responseData = '';
-    res.on('data', (chunk) => {
-      responseData += chunk;
-    });
-    res.on('end', () => {
-      console.log(responseData);
-    });
-  });
 
-  // handle any errors that occur
-  req.on('error', (error) => {
-    console.error(error);
-  });
-
-  // send the request with the data
-  req.write(data);
-  req.end();
-}
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -67,11 +34,31 @@ function activate(context) {
 		}else{
 			var selection = editor.selection;
 			var selectedText = editor.document.getText(selection);
-			//var responseText = sendDataToPython(selectedText);
-      var responseText = selectedText + " new...";
-      editor.edit(editBuilder => {
-				editBuilder.insert(editor.selection.active, "\n"+responseText+"\n");
-			})
+      // Define the command to call the Python script
+      const pythonScriptPath = context.extensionPath + "\\runModel.py";
+      const args = [selectedText];
+      // Spawn a child process to run the Python script
+      const pythonProcess = spawn('python3', [pythonScriptPath, ...args]);
+      // Log any output from the Python script to the console
+      pythonProcess.stdout.on('data', (data) => {
+        editor.edit(editBuilder => {
+          editBuilder.insert(editor.selection.active,"\n"+data+"\n");
+        })
+      });
+
+      // Log any errors from the Python script to the console
+      pythonProcess.stderr.on('data', (data) => {
+        editor.edit(editBuilder => {
+          editBuilder.insert(editor.selection.active,"\n"+data+"\n");
+        })
+      });
+
+      // Handle the Python script's exit event
+      pythonProcess.on('close', (code) => {
+        editor.edit(editBuilder => {
+          editBuilder.insert(editor.selection.active,"\n"+code+"\n");
+        })
+      });
 		}
 	});
 
