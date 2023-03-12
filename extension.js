@@ -67,8 +67,9 @@ function activate(context) {
 		}else{
 			var selection = editor.selection;
 			var selectedText = editor.document.getText(selection);
-			var responseText = sendDataToPython(selectedText);
-			editor.edit(editBuilder => {
+			//var responseText = sendDataToPython(selectedText);
+      var responseText = selectedText + " new...";
+      editor.edit(editBuilder => {
 				editBuilder.insert(editor.selection.active, "\n"+responseText+"\n");
 			})
 		}
