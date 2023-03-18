@@ -2,30 +2,6 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const { spawn } = require('child_process');
-function selectPreviousPythonComment(editor) {
-
-    const currentSelection = editor.selection;
-    let lineIndex = currentSelection.start.line - 1;
-
-    while (lineIndex >= 0) {
-        const line = editor.document.lineAt(lineIndex);
-        const text = line.text.trim();
-
-        if (text.startsWith('#')) {
-            const commentStart = text.indexOf('#');
-            const commentEnd = line.range.end.character;
-            const commentStartPosition = new vscode.Position(lineIndex, commentStart);
-            const commentEndPosition = new vscode.Position(lineIndex, commentEnd);
-
-            editor.selection = new vscode.Selection(commentStartPosition, commentEndPosition);
-            return;
-        } else if (text !== '') {
-            return;
-        }
-
-        lineIndex--;
-    }
-}
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -51,12 +27,55 @@ function activate(context) {
 			if(!editor){
 				vscode.window.showInformationMessage('No active editor selected!');
 			}else{
-				selectPreviousPythonComment(editor);
-				var selection = editor.selection;
-				var selectedText = editor.document.getText(selection)+" in python language";
+				const document = editor.document;
+				const fileName = document.fileName;
+				var suffix,commentDelim;
+				if(fileName.endsWith(".py")){
+					suffix = " in Python language";
+					commentDelim = "#";
+				}else if(fileName.endsWith(".c")){
+					suffix = " in C language";
+					commentDelim = "//";
+				}else if(fileName.endsWith(".cpp")){
+					suffix = " in C++ language";
+					commentDelim = "//";
+				}else if(fileName.endsWith(".java")){
+					suffix = " in Java language";
+					commentDelim = "//";
+				}else{
+					suffix = "";
+					commentDelim = "//";
+				}
+				vscode.window.showInformationMessage("Suffix : ",suffix);
+				vscode.window.showInformationMessage("Comment : ",commentDelim);
+
+				const currentSelection = editor.selection;
+				let lineIndex = currentSelection.start.line;
+
+				while (lineIndex >= 0) {
+					const line = editor.document.lineAt(lineIndex);
+					const text = line.text.trim();
+
+					if (text.startsWith(commentDelim)) {
+						const commentStart = text.indexOf(commentDelim) + 1;
+						const commentEnd = line.range.end.character;
+						const commentStartPosition = new vscode.Position(lineIndex, commentStart);
+						const commentEndPosition = new vscode.Position(lineIndex, commentEnd);
+
+						editor.selection = new vscode.Selection(commentStartPosition, commentEndPosition);
+						break;
+					} else if (text !== '') {
+						break;
+					}
+
+					lineIndex--;
+				}
+				var commandText = editor.document.getText(editor.selection);
+				var selectedText = commandText+suffix;
+
 				// Define the command to call the Python script
-				console.log("Command : ",selectedText);
-				vscode.window.showInformationMessage("Command : ",selectedText);
+				vscode.window.showInformationMessage("Command Text: "+commandText);
+				vscode.window.showInformationMessage("Complete Command: "+selectedText);
 				const pythonScriptPath = context.extensionPath + "\\runModel.py";
 				const args = [selectedText];
 				// Spawn a child process to run the Python script
