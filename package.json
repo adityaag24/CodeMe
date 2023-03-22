@@ -14,10 +14,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "texttocode.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "texttocode.runQuery",
         "keybindings": "ctrl+alt+q",
         "title": "Run Query"
