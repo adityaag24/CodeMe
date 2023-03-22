@@ -121,6 +121,9 @@ function extractSuffixComment(editor, suffix, commentDelim) {
 	} else if (fileName.endsWith(".js")) {
 		suffix = " in Javascript";
 		commentDelim = "//";
+	} else if (fileName.endsWith(".go")) {
+		suffix = " in GoLang";
+		commentDelim = "//";
 	} else {
 		suffix = "";
 		commentDelim = "//";
