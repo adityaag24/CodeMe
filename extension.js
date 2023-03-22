@@ -6,30 +6,25 @@ const { spawn } = require('child_process');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	let runQueryCommand = vscode.commands.registerCommand('texttocode.runQuery',async function() {
+	let runQueryCommand = vscode.commands.registerCommand('texttocode.generateQuery',async function() {
 		var editor = vscode.window.activeTextEditor;
 		if(!editor){
 			vscode.window.showErrorMessage('No active editor selected!');
 		}else{
-			var suffix,commentDelim;
 			//The below function extracts the suffix (in <x> language) and the comment delimeter (commentDelim)
-			({ suffix, commentDelim } = extractSuffixComment(editor, suffix, commentDelim));
-			const currentSelection = editor.selection;
-			const candidateText = editor.document.getText(currentSelection);
-			var commandText;
-			var selectedText;
+			var prefix = extractSuffixComment("Generate", editor);
 			//The below function extracts the selection by selecting a non-empty text if already selected or selecting the previous comment
-			({ commandText, selectedText } = handleSelectionComment(candidateText, commandText, selectedText, suffix, currentSelection, editor, commentDelim));	
+			var commandText = selectText(prefix, editor);	
 			//Finally, we run the model
-			runModel(context, selectedText, editor);
+			runModel(context, commandText, editor);
 		}
 		context.subscriptions.push(runQueryCommand);
 	});
 }
 
-function runModel(context, selectedText, editor) {
+function runModel(context, commandText, editor) {
 	const pythonScriptPath = context.extensionPath + "\\runModel.py";
-	const args = [selectedText];
+	const args = [commandText];
 	vscode.window.withProgress({
 		location: vscode.ProgressLocation.Notification,
 		title: 'Running CodeMe...',
@@ -55,14 +50,14 @@ function runModel(context, selectedText, editor) {
 
 function handleClose(code) {
 	if (code === 0) {
-		vscode.window.showInformationMessage('Python process completed successfully.');
+		console.log('Python process completed successfully.');
 	} else {
-		vscode.window.showErrorMessage(`Python process failed with error code ${code}.`);
+		console.log(`Python process failed with error code ${code}.`);
 	}
 }
 
 function handleError(data) {
-	vscode.window.showInformationMessage(`${data.toString()}`);
+	console.log(`${data.toString()}`);
 }
 
 function printDataToEditor(editor, data) {
@@ -73,62 +68,61 @@ function printDataToEditor(editor, data) {
 	});
 }
 
-function handleSelectionComment(candidateText, commandText, selectedText, suffix, currentSelection, editor, commentDelim) {
+function selectText(prefix, editor) {
+	const currentSelection = editor.selection;
+	const candidateText = editor.document.getText(currentSelection);
+	var commandText;
 	if (candidateText.trim().length != 0) {
 		commandText = candidateText;
-		selectedText = commandText + suffix;
-	} else {
-		extractComment(currentSelection, editor, commentDelim);
+	} else {// Get the position of the cursor
+		const cursorPosition = editor.selection.active;
+		const startOfDocumentPosition = new vscode.Position(0, 0);
+		const selection = new vscode.Selection(startOfDocumentPosition, cursorPosition);
+		editor.selection = selection;
 		commandText = editor.document.getText(editor.selection);
 	}
-	return { commandText, selectedText };
+	return prefix+commandText;
 }
 
-function extractComment(currentSelection, editor, commentDelim) {
-	let lineIndex = currentSelection.start.line;
-	while (lineIndex >= 0) {
-		const line = editor.document.lineAt(lineIndex);
-		const text = line.text.trim();
-		if (text.startsWith(commentDelim)) {
-			const commentStart = text.indexOf(commentDelim) + 1;
-			const commentEnd = line.range.end.character;
-			const commentStartPosition = new vscode.Position(lineIndex, commentStart);
-			const commentEndPosition = new vscode.Position(lineIndex, commentEnd);
-			editor.selection = new vscode.Selection(commentStartPosition, commentEndPosition);
-			break;
-		} else if (text !== '') {
-			break;
-		}
-		lineIndex--;
-	}
-}
+// function extractComment(currentSelection, editor, commentDelim) {
+// 	let lineIndex = currentSelection.start.line;
+// 	while (lineIndex >= 0) {
+// 		const line = editor.document.lineAt(lineIndex);
+// 		const text = line.text.trim();
+// 		if (text.startsWith(commentDelim)) {
+// 			const commentStart = text.indexOf(commentDelim) + 1;
+// 			const commentEnd = line.range.end.character;
+// 			const commentStartPosition = new vscode.Position(lineIndex, commentStart);
+// 			const commentEndPosition = new vscode.Position(lineIndex, commentEnd);
+// 			editor.selection = new vscode.Selection(commentStartPosition, commentEndPosition);
+// 			break;
+// 		} else if (text !== '') {
+// 			break;
+// 		}
+// 		lineIndex--;
+// 	}
+// }
 
-function extractSuffixComment(editor, suffix, commentDelim) {
+function extractSuffixComment(command, editor) {
 	const document = editor.document;
 	const fileName = document.fileName;
+	var prefix;
 	if (fileName.endsWith(".py")) {
-		suffix = " in Python";
-		commentDelim = "#";
+		prefix = command+" Python: ";
 	} else if (fileName.endsWith(".c")) {
-		suffix = " in C";
-		commentDelim = "//";
+		prefix = command+" C: ";
 	} else if (fileName.endsWith(".cpp")) {
-		suffix = " in C++";
-		commentDelim = "//";
+		prefix = command+" C++: ";
 	} else if (fileName.endsWith(".java")) {
-		suffix = " in Java";
-		commentDelim = "//";
+		prefix = command+" Java: ";
 	} else if (fileName.endsWith(".js")) {
-		suffix = " in Javascript";
-		commentDelim = "//";
+		prefix = command+" Javascript: ";
 	} else if (fileName.endsWith(".go")) {
-		suffix = " in GoLang";
-		commentDelim = "//";
+		prefix = command+" GoLang: ";
 	} else {
-		suffix = "";
-		commentDelim = "//";
+		prefix = "";
 	}
-	return { suffix, commentDelim };
+	return prefix;
 }
 
 // This method is called when your extension is deactivated

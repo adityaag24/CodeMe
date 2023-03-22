@@ -12,11 +12,48 @@
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
+    "keybindings": [
+      {
+        "command": "texttocode.generateQuery",
+        "key": "ctrl+alt+g"
+      },
+      {
+        "command": "texttocode.summarizeQuery",
+        "key": "ctrl+alt+s"
+      },
+      {
+        "command": "texttocode.defectQuery",
+        "key": "ctrl+alt+d"
+      },
+      {
+        "command": "texttocode.refineQuery",
+        "key": "ctrl+alt+r"
+      },
+      {
+        "command": "texttocode.translateQuery",
+        "key": "ctrl+alt+t"
+      }
+    ],
     "commands": [
       {
-        "command": "texttocode.runQuery",
-        "keybindings": "ctrl+alt+q",
-        "title": "Run Query"
+        "command": "texttocode.generateQuery",
+        "title": "Generate Code"
+      },
+      {
+        "command": "texttocode.summarizeQuery",
+        "title": "Summarize Code"
+      },
+      {
+        "command": "texttocode.defectQuery",
+        "title": "Find Defect"
+      },
+      {
+        "command": "texttocode.refineQuery",
+        "title": "Refine Query"
+      },
+      {
+        "command": "texttocode.translateQuery",
+        "title": "Translate"
       }
     ]
   },
