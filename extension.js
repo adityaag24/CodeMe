@@ -107,16 +107,19 @@ function extractSuffixComment(editor, suffix, commentDelim) {
 	const document = editor.document;
 	const fileName = document.fileName;
 	if (fileName.endsWith(".py")) {
-		suffix = " in Python language";
+		suffix = " in Python";
 		commentDelim = "#";
 	} else if (fileName.endsWith(".c")) {
-		suffix = " in C language";
+		suffix = " in C";
 		commentDelim = "//";
 	} else if (fileName.endsWith(".cpp")) {
-		suffix = " in C++ language";
+		suffix = " in C++";
 		commentDelim = "//";
 	} else if (fileName.endsWith(".java")) {
-		suffix = " in Java language";
+		suffix = " in Java";
+		commentDelim = "//";
+	} else if (fileName.endsWith(".js")) {
+		suffix = " in Javascript";
 		commentDelim = "//";
 	} else {
 		suffix = "";
