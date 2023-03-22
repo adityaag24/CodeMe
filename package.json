@@ -19,7 +19,7 @@
       },
       {
         "command": "texttocode.summarizeQuery",
-        "key": "ctrl+alt+s"
+        "key": "ctrl+alt+z"
       },
       {
         "command": "texttocode.defectQuery",

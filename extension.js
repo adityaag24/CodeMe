@@ -6,7 +6,7 @@ const { spawn } = require('child_process');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	let runQueryCommand = vscode.commands.registerCommand('texttocode.generateQuery',async function() {
+	let generateQueryCommand = vscode.commands.registerCommand('texttocode.generateQuery',async function() {
 		var editor = vscode.window.activeTextEditor;
 		if(!editor){
 			vscode.window.showErrorMessage('No active editor selected!');
@@ -18,7 +18,49 @@ function activate(context) {
 			//Finally, we run the model
 			runModel(context, commandText, editor);
 		}
-		context.subscriptions.push(runQueryCommand);
+		context.subscriptions.push(generateQueryCommand);
+	});
+	let defectQueryCommand = vscode.commands.registerCommand('texttocode.defectQuery',async function() {
+		var editor = vscode.window.activeTextEditor;
+		if(!editor){
+			vscode.window.showErrorMessage('No active editor selected!');
+		}else{
+			//The below function extracts the suffix (in <x> language) and the comment delimeter (commentDelim)
+			var prefix = extractSuffixComment("Defect", editor);
+			//The below function extracts the selection by selecting a non-empty text if already selected or selecting the previous comment
+			var commandText = selectText(prefix, editor);	
+			//Finally, we run the model
+			runModel(context, commandText, editor);
+		}
+		context.subscriptions.push(defectQueryCommand);
+	});
+	let summarizeQueryCommand = vscode.commands.registerCommand('texttocode.summarizeQuery',async function() {
+		var editor = vscode.window.activeTextEditor;
+		if(!editor){
+			vscode.window.showErrorMessage('No active editor selected!');
+		}else{
+			//The below function extracts the suffix (in <x> language) and the comment delimeter (commentDelim)
+			var prefix = extractSuffixComment("Summarize", editor);
+			//The below function extracts the selection by selecting a non-empty text if already selected or selecting the previous comment
+			var commandText = selectText(prefix, editor);	
+			//Finally, we run the model
+			runModel(context, commandText, editor);
+		}
+		context.subscriptions.push(summarizeQueryCommand);
+	});
+	let refineQueryCommand = vscode.commands.registerCommand('texttocode.refineQuery',async function() {
+		var editor = vscode.window.activeTextEditor;
+		if(!editor){
+			vscode.window.showErrorMessage('No active editor selected!');
+		}else{
+			//The below function extracts the suffix (in <x> language) and the comment delimeter (commentDelim)
+			var prefix = extractSuffixComment("Refine", editor);
+			//The below function extracts the selection by selecting a non-empty text if already selected or selecting the previous comment
+			var commandText = selectText(prefix, editor);	
+			//Finally, we run the model
+			runModel(context, commandText, editor);
+		}
+		context.subscriptions.push(refineQueryCommand);
 	});
 }
 

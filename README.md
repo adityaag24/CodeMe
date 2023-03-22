@@ -18,7 +18,7 @@ This is a Research Preview and can lead to minor code bloat.
 ## Set of Commands and KeyBindings
 
 * Ctrl+Alt+g/Cmd+Alt+g: To Generate Code Given a Query
-* Ctrl+Alt+s/Cmd+Alt+s: To Summarize A Given Code
+* Ctrl+Alt+z/Cmd+Alt+z: To Summarize A Given Code
 * Ctrl+Alt+d/Cmd+Alt+d: To Check if Code has a defect
 * Ctrl+Alt+r/Cmd+Alt+r: To Refine A Given Code
 * Ctrl+Alt+t/Cmd+Alt+t: To translate code from X to Y
@@ -26,13 +26,13 @@ This is a Research Preview and can lead to minor code bloat.
 ## Usage
 
 * Open a new code file in VS Code.
-* Select the text you want to generate code from.
-* Alternatively, you could just hit the run extension button (Ctrl+Alt+Q) that takes all the text from the current cursor position to beginning as selection.
-* Open the command palette by pressing Ctrl + Shift + P (Windows/Linux) or Cmd + Shift + P (macOS) to run the extension.
-* Alternatively, press the corresponding key given above for invoking the command.
+* Select the text you want to run the command for.
+* Alternatively, you could just hit the shortcut key (given above) that selects the text from the current cursor position to beginning of the document.
+* Open the command palette by pressing Ctrl+Shift+P (Windows/Linux) or Cmd+Shift+P (macOS) to run the extension.
+* Alternatively, press the corresponding key-binding (given above) for invoking the appropriate command.
 * Wait for the extension to run and the output will be inserted in the next line of the cursor in the active editor.
-* Preview the generated code and make any necessary adjustments
-* Export the code to a file or clipboard
+* Preview the generated code and make any necessary adjustments.
+* Export the code to a file or clipboard.
 
 ## Release Notes
 
