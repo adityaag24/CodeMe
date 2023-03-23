@@ -29,10 +29,12 @@ This is a Research Preview, only for Research Purposes.
 * Select the text you want to run the command for.
 * Alternatively, you could just hit the shortcut key (given above) that selects the text from the current cursor position to beginning of the document.
 * Open the command palette by pressing Ctrl+Shift+P (Windows/Linux) or Cmd+Shift+P (macOS) to run the extension.
-* Alternatively, press the corresponding key-binding (given above) for invoking the appropriate command.
+* Alternatively, press the corresponding key-binding (given above) for invoking the appropriate command. +
 * Wait for the extension to run and the output will be inserted in the next line of the cursor in the active editor.
 * Preview the generated code and make any necessary adjustments.
 * Export the code to a file or clipboard.
+
++ For translate command, the user will have to enter the prompt containing the language the user wants the code to translate to.
 
 ## Release Notes
 

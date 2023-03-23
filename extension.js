@@ -14,7 +14,7 @@ function activate(context) {
 			//The below function extracts the suffix (in <x> language) and the comment delimeter (commentDelim)
 			var prefix = extractSuffixComment("Generate", editor);
 			//The below function extracts the selection by selecting a non-empty text if already selected or selecting the previous comment
-			var commandText = selectText(prefix, editor);	
+			var commandText = selectText(prefix, editor, "");	
 			//Finally, we run the model
 			runModel(context, commandText, editor);
 		}
@@ -28,7 +28,7 @@ function activate(context) {
 			//The below function extracts the suffix (in <x> language) and the comment delimeter (commentDelim)
 			var prefix = extractSuffixComment("Defect", editor);
 			//The below function extracts the selection by selecting a non-empty text if already selected or selecting the previous comment
-			var commandText = selectText(prefix, editor);	
+			var commandText = selectText(prefix, editor, "");	
 			//Finally, we run the model
 			runModel(context, commandText, editor);
 		}
@@ -42,7 +42,7 @@ function activate(context) {
 			//The below function extracts the suffix (in <x> language) and the comment delimeter (commentDelim)
 			var prefix = extractSuffixComment("Summarize", editor);
 			//The below function extracts the selection by selecting a non-empty text if already selected or selecting the previous comment
-			var commandText = selectText(prefix, editor);	
+			var commandText = selectText(prefix, editor, "");	
 			//Finally, we run the model
 			runModel(context, commandText, editor);
 		}
@@ -56,11 +56,28 @@ function activate(context) {
 			//The below function extracts the suffix (in <x> language) and the comment delimeter (commentDelim)
 			var prefix = extractSuffixComment("Refine", editor);
 			//The below function extracts the selection by selecting a non-empty text if already selected or selecting the previous comment
-			var commandText = selectText(prefix, editor);	
+			var commandText = selectText(prefix, editor, "");	
 			//Finally, we run the model
 			runModel(context, commandText, editor);
 		}
 		context.subscriptions.push(refineQueryCommand);
+	});
+	let translateQueryCommand = vscode.commands.registerCommand('texttocode.translateQuery',async function() {
+		var editor = vscode.window.activeTextEditor;
+		if(!editor){
+			vscode.window.showErrorMessage('No active editor selected!');
+		}else{
+			const toLanguage = await vscode.window.showInputBox({
+				prompt: 'Enter Language you want to convert to',
+		 	});
+			//The below function extracts the suffix (in <x> language) and the comment delimeter (commentDelim)
+			var prefix = extractSuffixComment("Refine", editor);
+			//The below function extracts the selection by selecting a non-empty text if already selected or selecting the previous comment
+			var commandText = selectText(prefix, editor, toLanguage);	
+			//Finally, we run the model
+			runModel(context, commandText, editor);
+		}
+		context.subscriptions.push(translateQueryCommand);
 	});
 }
 
@@ -110,7 +127,7 @@ function printDataToEditor(editor, data) {
 	});
 }
 
-function selectText(prefix, editor) {
+function selectText(prefix, editor, translateCommand) {
 	const currentSelection = editor.selection;
 	const candidateText = editor.document.getText(currentSelection);
 	var commandText;
@@ -123,7 +140,11 @@ function selectText(prefix, editor) {
 		editor.selection = selection;
 		commandText = editor.document.getText(editor.selection);
 	}
-	return prefix+commandText;
+	if(translateCommand.length == 0){
+		return prefix+":"+commandText;
+	}else{
+		return prefix+"to "+translateCommand+" :"+commandText;
+	}
 }
 
 // function extractComment(currentSelection, editor, commentDelim) {
@@ -150,17 +171,17 @@ function extractSuffixComment(command, editor) {
 	const fileName = document.fileName;
 	var prefix;
 	if (fileName.endsWith(".py")) {
-		prefix = command+" Python: ";
+		prefix = command+" Python ";
 	} else if (fileName.endsWith(".c")) {
-		prefix = command+" C: ";
+		prefix = command+" C ";
 	} else if (fileName.endsWith(".cpp")) {
-		prefix = command+" C++: ";
+		prefix = command+" C++ ";
 	} else if (fileName.endsWith(".java")) {
-		prefix = command+" Java: ";
+		prefix = command+" Java ";
 	} else if (fileName.endsWith(".js")) {
-		prefix = command+" Javascript: ";
+		prefix = command+" Javascript ";
 	} else if (fileName.endsWith(".go")) {
-		prefix = command+" GoLang: ";
+		prefix = command+" GoLang ";
 	} else {
 		prefix = "";
 	}
