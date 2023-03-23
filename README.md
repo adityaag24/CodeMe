@@ -9,11 +9,11 @@ The user supplies the prompt using appropriate comments and the extension genera
 
 ## Requirements
 
-A GPU Enabled Machine would lead to faster prompt addressable, but not a necessity.
+A GPU Enabled Machine would have faster prompt addressability, although, it is not a necessity.
 
 ## Known Issues
 
-This is a Research Preview and can lead to minor code bloat.
+This is a Research Preview, only for Research Purposes.
 
 ## Set of Commands and KeyBindings
 
