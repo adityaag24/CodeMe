@@ -40,6 +40,10 @@
         "title": "Generate Code"
       },
       {
+        "command": "texttocode.codemesidebar",
+        "title": "Show Sidebar"
+      },
+      {
         "command": "texttocode.summarizeQuery",
         "title": "Summarize Code"
       },
